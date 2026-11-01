@@ -18,6 +18,9 @@ export type FontChoice = {
 export type TextStyle = {
   readonly fontId: string;
   readonly color: string;
+  readonly outlineColor?: string;
+  readonly outlineWidth?: number;
+  readonly lineHeight?: number;
   readonly size: number;
   readonly bold: boolean;
   readonly italic: boolean;
@@ -123,6 +126,9 @@ export const JCARD_FONTS: readonly FontChoice[] = [
 const BODY_STYLE: TextStyle = {
   fontId: 'archivo',
   color: '#111111',
+  outlineColor: '#ffffff',
+  outlineWidth: 0,
+  lineHeight: 1.15,
   size: 8,
   bold: false,
   italic: false,

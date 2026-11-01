@@ -1,13 +1,21 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import { fontFamily, type FreeText } from '../../model/editor-model';
+import { fontFamily, type FreeText, type TextStyle } from '../../model/editor-model';
 import type { JcardEditor } from '../../state/use-jcard-editor';
 import { TransformLayer, type AlignmentGuides } from './jcard-transform';
 
 const POINT_TO_CANVAS_HEIGHT_PERCENT = 25.4 / 72 / 1.016;
 
-function textFontSize(size: number, interactive: boolean) {
+function textSize(size: number, interactive: boolean) {
   return interactive ? `${size * POINT_TO_CANVAS_HEIGHT_PERCENT}cqh` : `${size}pt`;
+}
+
+function textOutline(style: TextStyle, interactive: boolean) {
+  return `${textSize(style.outlineWidth ?? 0, interactive)} ${style.outlineColor ?? '#ffffff'}`;
+}
+
+function textLineHeight(style: TextStyle) {
+  return style.lineHeight ?? 1.15;
 }
 
 export function TextObject({
@@ -34,6 +42,7 @@ export function TextObject({
       item.text,
       item.style.fontId,
       item.style.size,
+      textLineHeight(item.style),
       item.style.bold,
       item.style.italic,
       item.style.underline,
@@ -103,11 +112,13 @@ export function TextObject({
         style={{
           color: item.style.color,
           fontFamily: fontFamily(item.style.fontId),
-          fontSize: textFontSize(item.style.size, interactive),
+          fontSize: textSize(item.style.size, interactive),
           fontStyle: item.style.italic ? 'italic' : 'normal',
           fontWeight: item.style.bold ? 750 : 400,
+          lineHeight: textLineHeight(item.style),
           textAlign: item.style.align,
           textDecoration: item.style.underline ? 'underline' : 'none',
+          WebkitTextStroke: textOutline(item.style, interactive),
         }}
         onBlur={(event) => {
           setEditing(false);

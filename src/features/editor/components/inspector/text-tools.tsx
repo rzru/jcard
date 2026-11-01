@@ -11,6 +11,9 @@ export function TextTools({
   readonly editor: JcardEditor;
   readonly text: FreeText;
 }) {
+  const outlineWidth = text.style.outlineWidth ?? 0;
+  const lineHeight = text.style.lineHeight ?? 1.15;
+
   return (
     <div className="dock-panel text-tools">
       <label className="dock-field custom-text-field">
@@ -48,6 +51,30 @@ export function TextTools({
           }
         />
       </label>
+      <label className="dock-field color-field">
+        <span>Outline color</span>
+        <input
+          type="color"
+          value={text.style.outlineColor ?? '#ffffff'}
+          onChange={(event) =>
+            editor.updateTextStyle(text.id, { outlineColor: event.currentTarget.value })
+          }
+        />
+      </label>
+      <label className="dock-field range-field">
+        <span>Outline width</span>
+        <input
+          type="range"
+          min="0"
+          max="2"
+          step="0.01"
+          value={outlineWidth}
+          onChange={(event) =>
+            editor.updateTextStyle(text.id, { outlineWidth: event.currentTarget.valueAsNumber })
+          }
+        />
+        <output>{outlineWidth} pt</output>
+      </label>
       <label className="dock-field range-field">
         <span>Size</span>
         <input
@@ -60,6 +87,20 @@ export function TextTools({
           }
         />
         <output>{text.style.size} pt</output>
+      </label>
+      <label className="dock-field range-field">
+        <span>Line height</span>
+        <input
+          type="range"
+          min="0.75"
+          max="2.5"
+          step="0.05"
+          value={lineHeight}
+          onChange={(event) =>
+            editor.updateTextStyle(text.id, { lineHeight: event.currentTarget.valueAsNumber })
+          }
+        />
+        <output>{lineHeight}×</output>
       </label>
       <div className="format-buttons" aria-label="Text style">
         <button

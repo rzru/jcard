@@ -65,6 +65,9 @@ function isTextStyle(value: unknown): value is TextStyle {
   return [
     typeof value.fontId === 'string' && JCARD_FONTS.some((font) => font.id === value.fontId),
     isColor(value.color),
+    value.outlineColor === undefined || isColor(value.outlineColor),
+    value.outlineWidth === undefined || isNumberInRange(value.outlineWidth, 0, 2),
+    value.lineHeight === undefined || isNumberInRange(value.lineHeight, 0.75, 2.5),
     isNumberInRange(value.size, 5, 32),
     typeof value.bold === 'boolean',
     typeof value.italic === 'boolean',
