@@ -44,10 +44,7 @@ export function EditorShell() {
     <div className="editor-app">
       <header className="app-bar">
         <a className="brand" href="/" aria-label="Jcard home">
-          <span className="brand-mark" aria-hidden="true">
-            <i className="brand-reel brand-reel-left" />
-            <i className="brand-reel brand-reel-right" />
-          </span>
+          <img className="brand-mark" src="/favicon.svg" alt="" />
           <span>Jcard</span>
         </a>
         <div className="print-controls">

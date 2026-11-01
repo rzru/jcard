@@ -34,29 +34,8 @@
   }
 
   .brand-mark {
-    position: relative;
-    display: grid;
     width: 27px;
     height: 20px;
-    place-items: center;
-    border: 2px solid currentcolor;
-    border-radius: 3px;
-  }
-
-  .brand-reel {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    border: 1.5px solid currentcolor;
-    border-radius: 50%;
-  }
-
-  .brand-reel-left {
-    left: 4px;
-  }
-
-  .brand-reel-right {
-    right: 4px;
   }
 
   .app-status {
