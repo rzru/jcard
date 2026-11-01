@@ -116,6 +116,7 @@ export function TextObject({
           fontStyle: item.style.italic ? 'italic' : 'normal',
           fontWeight: item.style.bold ? 750 : 400,
           lineHeight: textLineHeight(item.style),
+          paintOrder: 'stroke fill',
           textAlign: item.style.align,
           textDecoration: item.style.underline ? 'underline' : 'none',
           WebkitTextStroke: textOutline(item.style, interactive),
