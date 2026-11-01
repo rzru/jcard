@@ -1,0 +1,101 @@
+@layer print {
+  .print-pages {
+    display: none;
+  }
+
+  @page jcard-a4 {
+    size: a4 landscape;
+    margin: 10mm;
+  }
+
+  @page jcard-a3 {
+    size: a3 landscape;
+    margin: 7mm;
+  }
+
+  @media print {
+    :root,
+    body,
+    .editor-app {
+      min-height: 0;
+      height: auto;
+      overflow: visible;
+      background: #fff;
+    }
+
+    .app-bar,
+    [data-editor-inspector],
+    .preview-toolbar,
+    .canvas-field,
+    .editor-dock {
+      display: none;
+    }
+
+    .editor-layout,
+    .editor-main,
+    .preview-workspace {
+      display: block;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .print-pages {
+      display: block;
+    }
+
+    .paper-a4 {
+      page: jcard-a4;
+    }
+
+    .paper-a3 {
+      page: jcard-a3;
+    }
+
+    .print-page {
+      display: block;
+      padding: 0;
+      break-inside: avoid;
+    }
+
+    .print-page + .print-page {
+      break-before: page;
+    }
+
+    .print-page .jcard-sheet {
+      --sheet-bg: #fff;
+      --sheet-ink: #111;
+      --sheet-accent: #111;
+      --sheet-second: #fff;
+      --sheet-text-surface: #fff;
+      --sheet-text-ink: #111;
+
+      max-width: none;
+      overflow: hidden;
+      border: 0.25mm solid #b7b7b0;
+      box-shadow: none;
+      animation: none;
+      direction: ltr;
+      transform: none;
+      print-color-adjust: exact;
+    }
+
+    .print-page .selectable-text {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      outline: 0;
+    }
+
+    .print-page .sheet-fold-line {
+      width: 0;
+      border: 0;
+      border-left: 0.15mm solid #e2e2dc;
+      background: none;
+      print-color-adjust: exact;
+    }
+
+    .hide-fold-lines .sheet-fold-line {
+      display: none;
+    }
+  }
+}

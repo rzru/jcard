@@ -1,0 +1,121 @@
+@layer inspector {
+  .editor-inspector {
+    position: sticky;
+    top: 65px;
+    height: calc(100svh - 65px);
+    overflow: auto;
+    border-right: 1px solid var(--line-strong);
+    background: var(--paper-bright);
+  }
+
+  .editor-inspector details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .editor-inspector summary {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    list-style: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .editor-inspector summary::after {
+    content: '+';
+    color: var(--ink-soft);
+    font: 18px/1 var(--mono);
+  }
+
+  .editor-inspector details[open] summary::after {
+    content: '−';
+  }
+
+  .editor-inspector summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .section-body {
+    padding: 0 20px 22px;
+  }
+
+  .format-options {
+    display: grid;
+  }
+
+  .format-option {
+    position: relative;
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    min-height: 54px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .format-option:has(.format-radio:checked) {
+    color: var(--ink);
+    background: #e5efec;
+  }
+
+  .format-radio {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--signal);
+  }
+
+  .format-option span:nth-child(2) {
+    display: grid;
+    gap: 1px;
+  }
+
+  .format-option strong {
+    font-size: 12px;
+  }
+
+  .format-option small {
+    color: var(--ink-soft);
+    font-size: 10px;
+  }
+
+  .paper-badge {
+    padding: 3px 5px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    color: var(--ink-soft);
+    font: 9px/1 var(--mono);
+  }
+
+  .field-error {
+    margin-top: 10px;
+    color: var(--error);
+    font-size: 11px;
+  }
+
+  .upload-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  @media (width <= 900px) {
+    .editor-inspector {
+      position: static;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--line-strong);
+    }
+  }
+}

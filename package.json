@@ -1,0 +1,53 @@
+{
+  "name": "jcard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "check": "pnpm quality",
+    "dev": "vite",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "pnpm lint:code && pnpm lint:css",
+    "lint:code": "oxlint",
+    "lint:code:fix": "oxlint --fix",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
+    "lint:fix": "pnpm lint:code:fix && pnpm lint:css:fix",
+    "postinstall": "pnpm rules:generate",
+    "preview": "vite preview",
+    "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm rules:check",
+    "rules:check": "rulesync doctor --strict && rulesync generate --dry-run --silent",
+    "rules:generate": "rulesync generate",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@fontsource-variable/anybody": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/funnel-sans": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource-variable/syne": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
+    "@fontsource/azeret-mono": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "design-crit": "^0.2.0",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "rulesync": "^16.17.0",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.5"
+  }
+}
