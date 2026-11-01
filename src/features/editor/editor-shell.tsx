@@ -43,8 +43,8 @@ export function EditorShell() {
   return (
     <div className="editor-app">
       <header className="app-bar">
-        <a className="brand" href="/" aria-label="Jcard home">
-          <img className="brand-mark" src="/favicon.svg" alt="" />
+        <a className="brand" href={import.meta.env.BASE_URL} aria-label="Jcard home">
+          <img className="brand-mark" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" />
           <span>Jcard</span>
         </a>
         <div className="print-controls">
