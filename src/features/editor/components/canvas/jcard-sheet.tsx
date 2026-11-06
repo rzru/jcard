@@ -14,16 +14,18 @@ type SheetProps = {
 export function JcardSheet({ editor, face, printable = false }: SheetProps) {
   const [alignmentGuides, setAlignmentGuides] = useState<AlignmentGuides>({});
   const width = totalWidth(editor.format);
+  const mirrored = face === 'inside';
+  const foldPanelWidths = mirrored
+    ? editor.format.panelWidths.toReversed()
+    : editor.format.panelWidths;
   const sheetStyle: CSSProperties = {
     aspectRatio: `${width} / 101.6`,
     ...(printable ? { width: `${width}mm`, height: '101.6mm' } : {}),
   };
-  const foldPositions = editor.format.panelWidths
+  const foldPositions = foldPanelWidths
     .slice(0, -1)
     .map((_, index) =>
-      editor.format.panelWidths
-        .slice(0, index + 1)
-        .reduce((sum, panelWidth) => sum + panelWidth, 0),
+      foldPanelWidths.slice(0, index + 1).reduce((sum, panelWidth) => sum + panelWidth, 0),
     );
 
   return (
@@ -47,6 +49,7 @@ export function JcardSheet({ editor, face, printable = false }: SheetProps) {
             interactive={!printable}
             key={area.id}
             label="Move area"
+            mirrored={mirrored}
             panelWidths={editor.format.panelWidths}
             rect={area}
             selected={!printable && editor.selectedArea?.id === area.id}
@@ -87,6 +90,7 @@ export function JcardSheet({ editor, face, printable = false }: SheetProps) {
             interactive={!printable}
             item={text}
             key={text.id}
+            mirrored={mirrored}
             onGuidesChange={setAlignmentGuides}
             panelWidths={editor.format.panelWidths}
             sheetWidth={width}

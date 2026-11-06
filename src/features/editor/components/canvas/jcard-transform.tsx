@@ -1,6 +1,6 @@
 import { useRef, type PointerEvent, type ReactNode } from 'react';
 
-import type { CanvasRect } from '../../model/editor-model';
+import { mirroredRect, type CanvasRect } from '../../model/editor-model';
 
 type ResizeEdge = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 
@@ -27,6 +27,7 @@ type TransformLayerProps = {
   readonly className: string;
   readonly interactive: boolean;
   readonly label: string;
+  readonly mirrored?: boolean;
   readonly panelWidths: readonly number[];
   readonly rect: CanvasRect;
   readonly rotation?: number;
@@ -348,6 +349,7 @@ export function TransformLayer({
   className,
   interactive,
   label,
+  mirrored = false,
   onChange,
   onChangeStart,
   onDoubleClick,
@@ -358,6 +360,9 @@ export function TransformLayer({
   rotation = 0,
   selected,
 }: TransformLayerProps) {
+  const viewRect = mirrored ? mirroredRect(rect, boundsWidth) : rect;
+  const viewRotation = mirrored ? -rotation : rotation;
+  const viewPanelWidths = mirrored ? panelWidths.toReversed() : panelWidths;
   const dragRef = useRef<
     | {
         axisLock?: AxisLock;
@@ -387,13 +392,13 @@ export function TransformLayer({
 
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
-    const targets = collectSnapTargets(sheet, layer, panelWidths, {
+    const targets = collectSnapTargets(sheet, layer, viewPanelWidths, {
       width: boundsWidth,
       height: boundsHeight,
     });
     const sheetBounds = sheet.getBoundingClientRect();
     const alignment = snapRect(
-      { ...rect, rotation },
+      { ...viewRect, rotation: viewRotation },
       targets,
       (SNAP_THRESHOLD_PX / sheetBounds.width) * boundsWidth,
       (SNAP_THRESHOLD_PX / sheetBounds.height) * boundsHeight,
@@ -405,7 +410,7 @@ export function TransformLayer({
       lastRect: alignment.rect,
       pointerX: event.clientX,
       pointerY: event.clientY,
-      rect,
+      rect: viewRect,
       targets,
     };
     onGuidesChange({});
@@ -429,7 +434,7 @@ export function TransformLayer({
       x = clamp(drag.rect.x + dx, 0, boundsWidth - width);
       y = clamp(drag.rect.y + dy, 0, boundsHeight - height);
       const snapped = snapRect(
-        { x, y, width, height, rotation },
+        { x, y, width, height, rotation: viewRotation },
         drag.targets,
         (SNAP_THRESHOLD_PX / sheetBounds.width) * boundsWidth,
         (SNAP_THRESHOLD_PX / sheetBounds.height) * boundsHeight,
@@ -469,7 +474,9 @@ export function TransformLayer({
       drag.changed = true;
       onChangeStart();
     }
-    onChange({ x, y, width, height });
+    onChange(
+      mirrored ? mirroredRect({ x, y, width, height }, boundsWidth) : { x, y, width, height },
+    );
   }
 
   function stopTransform(event: PointerEvent<HTMLElement>) {
@@ -487,11 +494,11 @@ export function TransformLayer({
       className={`${className}${selected ? ' is-selected' : ''}`}
       data-align-layer
       style={{
-        left: `${(rect.x / boundsWidth) * 100}%`,
-        top: `${(rect.y / boundsHeight) * 100}%`,
-        width: `${(rect.width / boundsWidth) * 100}%`,
-        height: `${(rect.height / boundsHeight) * 100}%`,
-        transform: `rotate(${rotation}deg)`,
+        left: `${(viewRect.x / boundsWidth) * 100}%`,
+        top: `${(viewRect.y / boundsHeight) * 100}%`,
+        width: `${(viewRect.width / boundsWidth) * 100}%`,
+        height: `${(viewRect.height / boundsHeight) * 100}%`,
+        transform: `rotate(${viewRotation}deg)`,
       }}
       onDoubleClick={onDoubleClick}
       onPointerDown={startTransform}

@@ -83,6 +83,25 @@
     transform: translateY(-1px);
   }
 
+  .print-copies {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ink-soft);
+    font-size: 11px;
+  }
+
+  .print-copies select {
+    min-height: 28px;
+    padding: 0 6px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--paper-bright);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
   .print-button {
     display: inline-flex;
     min-height: 42px;
@@ -165,6 +184,10 @@
     }
 
     .print-fold-toggle {
+      font-size: 10px;
+    }
+
+    .print-copies {
       font-size: 10px;
     }
 

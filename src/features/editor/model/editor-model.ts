@@ -152,7 +152,7 @@ const TRACK_STYLE: TextStyle = {
   size: 10,
 };
 
-export const INITIAL_TEXTS: readonly FreeText[] = [
+const INITIAL_TEXT_LAYOUT: readonly FreeText[] = [
   {
     id: 'text-1',
     face: 'outside',
@@ -201,7 +201,7 @@ export const INITIAL_TEXTS: readonly FreeText[] = [
     id: 'text-5',
     face: 'inside',
     text: 'SIDE A',
-    x: 42.50505256861545,
+    x: 4.5,
     y: 7.9987223466075905,
     width: 24.944347335762604,
     height: 7.517489303622347,
@@ -234,7 +234,7 @@ export const INITIAL_TEXTS: readonly FreeText[] = [
     id: '8c74e109-b180-4639-a4f8-bceecae4a796',
     face: 'inside',
     text: '01  Streetlights\n02  Last Train\n03  Soft Static\n04  Window Seat',
-    x: 42.502195307618244,
+    x: 4.5,
     y: 22.465470103822035,
     width: 26.140309194326566,
     height: 16.23094281463916,
@@ -245,7 +245,7 @@ export const INITIAL_TEXTS: readonly FreeText[] = [
     id: 'c2877124-1149-4806-89a4-318b5d6707d7',
     face: 'inside',
     text: 'SIDE B',
-    x: 108.72431819002145,
+    x: 69,
     y: 7.9987223466075905,
     width: 21.86901684231242,
     height: 6.663229155483445,
@@ -256,7 +256,7 @@ export const INITIAL_TEXTS: readonly FreeText[] = [
     id: '1aebe453-aea4-4aae-a300-6aea49fb4393',
     face: 'inside',
     text: '01  Streetlights\n02  Last Train\n03  Soft Static\n04  Window Seat',
-    x: 108.7243077620616,
+    x: 69,
     y: 22.464192450429632,
     width: 26.140309194326566,
     height: 16.23094281463916,
@@ -265,12 +265,99 @@ export const INITIAL_TEXTS: readonly FreeText[] = [
   },
 ];
 
+export const INITIAL_TEXTS: readonly FreeText[] = INITIAL_TEXT_LAYOUT.map(mirroredInsideText);
+
 export function fontFamily(id: string): string {
   return JCARD_FONTS.find((font) => font.id === id)?.family ?? "'Funnel Sans Variable', sans-serif";
 }
 
 export function totalWidth(format: JcardFormat): number {
   return format.panelWidths.reduce((sum, width) => sum + width, 0);
+}
+
+export type PaperName = JcardFormat['paper'];
+
+const PAPER_SIZES: Record<PaperName, { readonly width: number; readonly height: number }> = {
+  A4: { width: 297, height: 210 },
+  A3: { width: 420, height: 297 },
+};
+
+const PAPER_MARGINS: Record<PaperName, number> = { A4: 2, A3: 5 };
+const PAPER_ORDER: readonly PaperName[] = ['A4', 'A3'];
+const SHEET_PRINT_GAP = 1;
+const SHEET_HEIGHT = 101.6;
+
+const COPY_GRIDS: readonly {
+  readonly copies: number;
+  readonly columns: number;
+  readonly rows: number;
+}[] = [
+  { copies: 1, columns: 1, rows: 1 },
+  { copies: 2, columns: 2, rows: 1 },
+  { copies: 2, columns: 1, rows: 2 },
+  { copies: 4, columns: 2, rows: 2 },
+];
+
+export const PRINT_COPY_COUNTS = [1, 2, 4] as const;
+
+export type PrintLayout = {
+  readonly copies: number;
+  readonly columns: number;
+  readonly paper: PaperName;
+  readonly rotated: boolean;
+};
+
+type Grid = (typeof COPY_GRIDS)[number];
+
+function fitsPaper(sheetWidth: number, grid: Grid, paper: PaperName, rotated: boolean): boolean {
+  const size = PAPER_SIZES[paper];
+  const margin = PAPER_MARGINS[paper];
+  const placedWidth = rotated ? SHEET_HEIGHT : sheetWidth;
+  const placedHeight = rotated ? sheetWidth : SHEET_HEIGHT;
+  const neededWidth = grid.columns * placedWidth + (grid.columns - 1) * SHEET_PRINT_GAP;
+  const neededHeight = grid.rows * placedHeight + (grid.rows - 1) * SHEET_PRINT_GAP;
+
+  return neededWidth <= size.width - 2 * margin && neededHeight <= size.height - 2 * margin;
+}
+
+export function printLayout(format: JcardFormat, copies: number): PrintLayout | undefined {
+  const sheetWidth = totalWidth(format);
+  const placement = PAPER_ORDER.flatMap((paper) =>
+    COPY_GRIDS.filter((item) => item.copies === copies).flatMap((grid) =>
+      [false, true].map((rotated) => ({ paper, grid, rotated })),
+    ),
+  ).find((option) => fitsPaper(sheetWidth, option.grid, option.paper, option.rotated));
+
+  return placement === undefined
+    ? undefined
+    : {
+        copies,
+        columns: placement.grid.columns,
+        paper: placement.paper,
+        rotated: placement.rotated,
+      };
+}
+
+export function printLayouts(format: JcardFormat): readonly PrintLayout[] {
+  const paper = printLayout(format, 1)?.paper;
+
+  return PRINT_COPY_COUNTS.flatMap((copies) => {
+    const layout = printLayout(format, copies);
+    return layout === undefined || layout.paper !== paper ? [] : [layout];
+  });
+}
+
+export function mirroredRect(rect: CanvasRect, sheetWidth: number): CanvasRect {
+  return { ...rect, x: sheetWidth - rect.x - rect.width };
+}
+
+function mirroredInsideText(text: FreeText): FreeText {
+  if (text.face !== 'inside') {
+    return text;
+  }
+
+  const { x } = mirroredRect(text, totalWidth(DEFAULT_FORMAT));
+  return { ...text, x };
 }
 
 export function defaultTextStyle(): TextStyle {

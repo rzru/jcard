@@ -22,6 +22,7 @@ export function TextObject({
   editor,
   interactive,
   item,
+  mirrored,
   onGuidesChange,
   panelWidths,
   sheetWidth,
@@ -29,6 +30,7 @@ export function TextObject({
   readonly editor: JcardEditor;
   readonly interactive: boolean;
   readonly item: FreeText;
+  readonly mirrored: boolean;
   readonly onGuidesChange: (guides: AlignmentGuides) => void;
   readonly panelWidths: readonly number[];
   readonly sheetWidth: number;
@@ -92,6 +94,7 @@ export function TextObject({
       className={`selectable-text${editing ? ' is-editing' : ''}`}
       interactive={interactive && !editing}
       label="Move text; double-click to edit"
+      mirrored={mirrored}
       panelWidths={panelWidths}
       rect={item}
       rotation={item.rotation}

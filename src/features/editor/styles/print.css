@@ -3,14 +3,26 @@
     display: none;
   }
 
+  .print-pages.paper-a4 {
+    --print-paper-width: 297mm;
+    --print-paper-height: 210mm;
+    --print-paper-margin: 2mm;
+  }
+
+  .print-pages.paper-a3 {
+    --print-paper-width: 420mm;
+    --print-paper-height: 297mm;
+    --print-paper-margin: 5mm;
+  }
+
   @page jcard-a4 {
     size: a4 landscape;
-    margin: 10mm;
+    margin: 2mm;
   }
 
   @page jcard-a3 {
     size: a3 landscape;
-    margin: 7mm;
+    margin: 5mm;
   }
 
   @media print {
@@ -52,9 +64,23 @@
     }
 
     .print-page {
-      display: block;
+      display: grid;
+      width: calc(var(--print-paper-width) - 2 * var(--print-paper-margin));
+      height: calc(var(--print-paper-height) - 2 * var(--print-paper-margin) - 1mm);
+      grid-template-columns: auto;
+      place-content: center;
+      gap: 1mm;
       padding: 0;
       break-inside: avoid;
+    }
+
+    .print-grid-2 .print-page {
+      grid-template-columns: repeat(2, auto);
+    }
+
+    .print-copy {
+      position: relative;
+      display: block;
     }
 
     .print-page + .print-page {
@@ -96,6 +122,13 @@
 
     .hide-fold-lines .sheet-fold-line {
       display: none;
+    }
+
+    .is-rotated .print-copy > .jcard-sheet {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { totalWidth } from '../../model/editor-model';
+import { totalWidth, type PrintLayout } from '../../model/editor-model';
 import type { JcardEditor } from '../../state/use-jcard-editor';
 import { CanvasViewport } from './canvas-viewport';
 import { JcardSheet } from './jcard-sheet';
@@ -8,9 +8,11 @@ import { JcardSheet } from './jcard-sheet';
 export function JcardPreview({
   editor,
   printFoldLines,
+  printLayout,
 }: {
   readonly editor: JcardEditor;
   readonly printFoldLines: boolean;
+  readonly printLayout: PrintLayout;
 }) {
   const width = totalWidth(editor.format);
   const [zoom, setZoom] = useState(100);
@@ -21,7 +23,7 @@ export function JcardPreview({
         <div className="preview-title">
           <h1 id="preview-heading">J-card canvas</h1>
           <p>
-            {width.toFixed(1)} × 101.6 mm · {editor.format.paper} landscape
+            {width.toFixed(1)} × 101.6 mm · {printLayout.paper} landscape
           </p>
         </div>
         <div className="preview-actions">
@@ -69,15 +71,22 @@ export function JcardPreview({
       </div>
 
       <div
-        className={`print-pages paper-${editor.format.paper.toLowerCase()}${printFoldLines ? '' : ' hide-fold-lines'}`}
+        className={`print-pages paper-${printLayout.paper.toLowerCase()} print-grid-${printLayout.columns}${printLayout.rotated ? ' is-rotated' : ''}${printFoldLines ? '' : ' hide-fold-lines'}`}
         aria-hidden="true"
       >
-        <div className="print-page">
-          <JcardSheet editor={editor} face="outside" printable />
-        </div>
-        <div className="print-page">
-          <JcardSheet editor={editor} face="inside" printable />
-        </div>
+        {(['outside', 'inside'] as const).map((face) => (
+          <div className="print-page" key={face}>
+            {Array.from({ length: printLayout.copies }, (_, index) => (
+              <span
+                className="print-copy"
+                key={index}
+                style={printLayout.rotated ? { width: '101.6mm', height: `${width}mm` } : undefined}
+              >
+                <JcardSheet editor={editor} face={face} printable />
+              </span>
+            ))}
+          </div>
+        ))}
       </div>
     </section>
   );

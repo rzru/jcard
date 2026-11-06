@@ -23,11 +23,16 @@ import { JcardPreview } from './components/canvas/jcard-preview';
 import { PrintIcon } from './components/icons';
 import { EditorInspector } from './components/inspector/editor-inspector';
 import { isEditingText, runEditorShortcut } from './keyboard/editor-shortcuts';
+import { printLayouts } from './model/editor-model';
 import { useJcardEditor } from './state/use-jcard-editor';
 
 export function EditorShell() {
   const editor = useJcardEditor();
   const [printFoldLines, setPrintFoldLines] = useState(true);
+  const [printCopies, setPrintCopies] = useState(1);
+  const availableLayouts = printLayouts(editor.format);
+  const activeLayout =
+    availableLayouts.find((layout) => layout.copies === printCopies) ?? availableLayouts[0];
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -48,6 +53,21 @@ export function EditorShell() {
           <span>Jcard</span>
         </a>
         <div className="print-controls">
+          {availableLayouts.length < 2 ? null : (
+            <label className="print-copies">
+              <span>Per sheet</span>
+              <select
+                value={activeLayout.copies}
+                onChange={(event) => setPrintCopies(Number(event.currentTarget.value))}
+              >
+                {availableLayouts.map((layout) => (
+                  <option key={layout.copies} value={layout.copies}>
+                    {layout.copies}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className="print-fold-toggle">
             <input
               type="checkbox"
@@ -66,7 +86,11 @@ export function EditorShell() {
       <main className="editor-layout">
         <EditorInspector editor={editor} />
         <div className="editor-main">
-          <JcardPreview editor={editor} printFoldLines={printFoldLines} />
+          <JcardPreview
+            editor={editor}
+            printFoldLines={printFoldLines}
+            printLayout={activeLayout}
+          />
         </div>
       </main>
     </div>
